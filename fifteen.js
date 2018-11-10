@@ -1,23 +1,26 @@
+//extra feature-timer
 
+
+var elTime;
 var puzzlearea;
-var squares;
+var text;
+var tiles;
 var shufflebutton;
 var validMoves=[];
 var emptySpaceX = '300px';
 var emptySpaceY = '300px';
 window.onload = function()
 {
-    btnFunc();
 
-	var timerSpace = document.createElement("P");
-	var pzl = document.getElementById("puzzlearea");
-	var text = document.createTextNode("Timer: 00:00");
-	document.getElementById("overall").insertBefore(timerSpace,pzl)
-	timerSpace.id = "timerSpace";
-	timerSpace.appendChild(text);
-
+	elTime= document.createElement("Time");
 	puzzlearea = document.getElementById("puzzlearea");
-	squares = puzzlearea.getElementsByTagName("div");
+	text = document.createTextNode("Timer: 00:00");
+	document.getElementById("overall").insertBefore(elTime,puzzlearea);
+	elTime.id = "elTime";
+	elTime.appendChild(text);
+
+
+	tiles = puzzlearea.getElementsByTagName("div");
 	shufflebutton = document.getElementById("shufflebutton");
 
 	initializeGrid();
@@ -29,14 +32,27 @@ window.onload = function()
 
 function initializeGrid()
 {
-	for (var i=0; i<squares.length; i++)
+  var x= 0;
+  var y= 0;
+  var count = 0;
+	for (var i=0; i<tiles.length; i++)
 	{
+		tiles[i].className = "puzzlepiece";
+		//tiles[i].style.left = (i % 4 * 100) + "px";
+		//tiles[i].style.top = (parseInt(i / 4) * 100) + "px";
 
-		squares[i].className = "puzzlepiece";
-		squares[i].style.left = (i % 4 * 100) + "px";
-		squares[i].style.top = (parseInt(i / 4) * 100) + "px";
-		squares[i].style.backgroundPosition = "-" + squares[i].style.left + " " + "-" + squares[i].style.top;
-		squares[i].onclick = function()
+    tiles[i].style.left= x + "px";
+    tiles[i].style.top= y + "px";
+    x += 100;
+    count += 1;
+
+    if (count %4==0){
+      y+=100;
+      x=0;
+}
+
+  	tiles[i].style.backgroundPosition = "-" + tiles[i].style.left + " " + "-" + tiles[i].style.top;
+		tiles[i].onclick = function()
 		{
 			if (isValidMove(this.style.left, this.style.top))
 			{
@@ -47,7 +63,30 @@ function initializeGrid()
 		}
 
 
-		squares[i].onmouseover = function()
+  /*  pieces[0].style.background ="background.jpg";
+    var x= 0;
+    var y= 0;
+    var count = 0;
+
+    for (var i=0; i < pieces.length; i++){
+      pieces[i].className = ('puzzlepiece');
+
+      pieces[i].style.left= x + "px";
+      pieces[i].style.top= y + "px";
+      x += 100;
+      count += 1;
+
+      if (count %4==0){
+        y+=100;
+        x=0;
+      }
+    }
+*/
+
+
+
+
+		tiles[i].onmouseover = function()
 		{
 
 			if (isValidMove(this.style.left, this.style.top))
@@ -57,7 +96,7 @@ function initializeGrid()
 
 		}
 
-		squares[i].onmouseout = function()
+		tiles[i].onmouseout = function()
 		{
 			this.classList.remove("movablepiece");
 		}
@@ -77,13 +116,13 @@ function shufflePieces()
 		rndNum = Math.floor(Math.random() * validMoves.length);
 
 
-		for (var x = 0; x < squares.length; x++)
+		for (var x = 0; x < tiles.length; x++)
 		{
-			if ((validMoves[rndNum][0] === parseInt(squares[x].style.left))
-				&& (validMoves[rndNum][1] === parseInt(squares[x].style.top)))
+			if ((validMoves[rndNum][0] === parseInt(tiles[x].style.left))
+				&& (validMoves[rndNum][1] === parseInt(tiles[x].style.top)))
 			{
 
-				switchPieces(parseInt(squares[x].innerHTML-1));
+				switchPieces(parseInt(tiles[x].innerHTML-1));
 				calcValidMoves();
 				break;
 			}
@@ -95,13 +134,13 @@ function shufflePieces()
 function switchPieces(puzzlePiece)
 {
 
-	var temp = squares[puzzlePiece].style.left;
-	squares[puzzlePiece].style.left = emptySpaceX;
+	var temp = tiles[puzzlePiece].style.left;
+	tiles[puzzlePiece].style.left = emptySpaceX;
 	emptySpaceX = temp;
 
 
-	temp = squares[puzzlePiece].style.top;
-	squares[puzzlePiece].style.top = emptySpaceY;
+	temp = tiles[puzzlePiece].style.top;
+	tiles[puzzlePiece].style.top = emptySpaceY;
 	emptySpaceY = temp;
 }
 
@@ -139,15 +178,6 @@ function calcValidMoves()
 	}
 }
 
-function btnFunc(){
-    var btn = document.createElement("BUTTON");
-    btn.id = "btn";
-    btn.appendChild(document.createTextNode("Reset"));
-    btn.addEventListener("click",reset);
-    document.getElementById("controls").appendChild(btn);
-}
-
-
 
 function isValidMove(pieceX, pieceY)
 {
@@ -182,12 +212,5 @@ function timer(){
         second = 0;
         minute++;
         }
-    document.getElementById("timerSpace").innerHTML = "Timer: "+minuteSecond;
-}
-
-function reset(){
-    emptySpaceX = '300px';
-    emptySpaceY = '300px';
-    initializeGrid();
-    sessionStart = false;
+    document.getElementById("elTime").innerHTML = "Timer: "+minuteSecond;
 }
